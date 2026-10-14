@@ -12,7 +12,7 @@ name:{
 price:{
     type:Number,
     required:[true,"Subscription price is required"],
-    minLength:[0,'Price must be greater than 0'],
+    min:[0,'Price must be greater than or equal to 0'],
 },
 currency:{
     type:String,
@@ -22,6 +22,7 @@ currency:{
 frequency:{
     type:String,
     enum:['daily','weekly','monthly','yearly'],
+    required:[true,'Subscription frequency is required'],
 },
 category:{
     type:String,
@@ -43,34 +44,38 @@ startDate:{
     required:true,
     validate:{
         validator: (value) => {
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
         const oneYearFromNow = new Date();
         oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-        // Allows dates between now and 1 year in the future
-        return value >= new Date() && value <= oneYearFromNow;
+        oneYearFromNow.setHours(23, 59, 59, 999);
+        // Allows dates between today and 1 year in the future
+        return value >= startOfToday && value <= oneYearFromNow;
     },
     message: 'Start date must be between today and one year from now.'
-    },
-    renewalDate:{
-      type:Date,
-      required:true,
-       validator: function(value) {
-        const startDate = typeof this.get === 'function' ? this.get('startDate') : this.startDate;
-        return startDate ? value > startDate : false;
-      },
-      message: 'The renewable date must be after the start date.'
-      
-    },
-    user:{
+    }
+},
+renewalDate:{
+    type:Date,
+    required:true,
+    validate:{
+        validator: function(value) {
+            const startDate = typeof this.get === 'function' ? this.get('startDate') : this.startDate;
+            return startDate ? value > startDate : false;
+        },
+        message: 'The renewal date must be after the start date.'
+    }
+},
+user:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
         required:true,
         index:true
     }
-}
 },{timestamps:true}); 
 
-subscriptionSchema.pre('save',function(next){
-    if(!this.renewableDate){
+subscriptionSchema.pre('validate',async function(){
+    if(!this.renewalDate){
         const renewalPeriod={
             daily:1,
             weekly:7,
@@ -88,7 +93,6 @@ subscriptionSchema.pre('save',function(next){
     if(this.renewalDate < new Date()){
         this.status = 'expired';
     }
-    next();
 })
 
 

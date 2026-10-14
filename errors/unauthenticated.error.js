@@ -4,7 +4,7 @@ import CustomApiError from "./custom-api.error.js";
 class UnauthenticatedError extends CustomApiError{
     constructor(message){
         super(message);
-        this.statusCode= StatusCodes.FORBIDDEN;
+        this.statusCode= StatusCodes.UNAUTHORIZED;
     }
 }
 

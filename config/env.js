@@ -5,4 +5,4 @@ dotenv.config({
 });
 
 
-export const {JWT_EXPIRES_IN,PORT,NODE_ENV,MONGO_URI,JWT_SECRET} =process.env;
+export const {JWT_EXPIRES_IN,PORT,NODE_ENV,MONGO_URI,JWT_SECRET,QSTASH_URL,QSTASH_TOKEN} =process.env;

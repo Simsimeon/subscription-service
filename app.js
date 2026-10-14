@@ -16,7 +16,7 @@ const authLimiter = rateLimit({
   statusCode: StatusCodes.TOO_MANY_REQUESTS, 
   message: {
     success: false,
-    message: 'Too many login or registration attempts from this IP. Please try again after 15 minutes.'
+    msg: 'Too many attempts from this IP. Please try again after 15 minutes.'
   },
 })
 
