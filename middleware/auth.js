@@ -6,8 +6,8 @@ import { verifyToken } from "../utils/createUserToken.js"
  export const authUserMiddleware = async (req,res,next)=>{
     try{
 
-    const token = req.signedCookies.token
-    console.log(token);
+    const token = req.signedCookies.token;
+
     
    if(!token){
     throw new UnauthenticatedError('user is not authenticated')
@@ -17,7 +17,7 @@ import { verifyToken } from "../utils/createUserToken.js"
    if(!payload){
     throw new UnauthenticatedError('user is not authenticated')
    }
-   console.log(payload);
+   
    
    const { userId, username,email, role}  = payload
     req.user = { userId, username,email, role}

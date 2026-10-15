@@ -9,6 +9,7 @@ import notFoundRoute from './middleware/notFoundRoutes.js';
 import cookieParser from 'cookie-parser';
 import { rateLimit } from 'express-rate-limit';
 import { StatusCodes } from 'http-status-codes';
+import workFlowRouter from './routes/workflow/work-flow.route.js';
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, 
@@ -26,6 +27,9 @@ app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 app.use(cookieParser(JWT_SECRET));
 
+// QStash callbacks arrive once per step and once per sleep wake-up, so this
+// route is mounted before the limiter to keep reminder workflows alive.
+app.use("/api/v1/workflow",workFlowRouter);
 
 app.use(authLimiter);
 
